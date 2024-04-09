@@ -1,10 +1,14 @@
-MegaBox 2.0 - dev branch
+# MegaBox 2.0.2a - dev branch
 
 Simple Mega.nz appx file downloader & launcher (special for Project Astoria W10M fans))
 
 ## Screenshot(s)
 ![screenshot](Images/shot01.png)
 
+## Tech. details
+- Targets: UWP; Android; iOS
+- Win SDK: 19041
+- Min W10M os build: 10240 (Astoria)
 
 ## Quick Start (for your own experiments and code modifications)
 - Clone the repo from GitHub
