@@ -30,11 +30,11 @@ Used Mega Storage URL : https://mega.nz/folder/SKZxnQAR#EvlQqjMIVQwoxcje9r-jAw
 - Appx launches not ready... (?)
 
 ## System requirements
-- Minimal Windows 10 Mobile os's build: 10570 (Astoria)
+- Minimal Windows 10 Mobile os's build: 10240 (Astoria)
 
 ## Quick Start for your own experiments and my code modifications
 - Clone the repo from GitHub
-- Open in Visual Studio 022 Preview
+- Open in Visual Studio 2022 Preview
 - for start this Xamarin app at Windows 10 Mobile (Phone), choose target "ARM";  
 to run this Xamarin app at Windows 10 (Desktop), choose target "x86". 
 
