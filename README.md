@@ -1,33 +1,20 @@
-# MegaBoxA
+MegaBox 2.0 - dev branch
+Simple Mega.nz appx file downloader & launcher (special for Project Astoria W10M fans))
 
-## About
-Simple 4PDA Project Astoria Mega's appx file downloader & launcher (special 4PDA W10M fans)
+![screenshot](Images/shot01.png)
 
 
-## Screenshots
-![screenshot1:UWP](Images/shot1.png)
-![screenshot2:Android](Images/shot2.png)
-
-## Features
-- Easy mode (no settings, etc.) 
-- No folders
-- Autolaunch downloaded file (RnD, "As-Is")
-- App Search (sloooowest, but works)))
-
-## Status
-- Appx launches not ready 
-
-## System requirements
-- Minimal Windows 10 Mobile os's build: 10570 (Astoria)
-
-## Quick Start for your own experiments and my code modifications
+# Quick Start (for your own experiments and code modifications)
 - Clone the repo from GitHub
-- Open in Visual Studio 022 Preview
-- for start this Xamarin app at Windows 10 Mobile (Phone), choose target "ARM";  
-to run this Xamarin app at Windows 10 (Desktop), choose target "x86". 
+- Open in Visual Studio 2017/2019/2019 Preview
+- To run this UWP sample app at Windows Phone, choose ARM; 
 
-## .
-AS IS. No support. RnD only.
+  to run this UWP sample app at Windows 10, choose x64. 
 
 ## ..
--- [m][e] 2023
+As is. No support. RnD only. DIY.
+
+## .
+[m][e] 2024
+
+
