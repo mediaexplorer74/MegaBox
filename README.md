@@ -1,7 +1,9 @@
 # MegaBox v1 - master branch
 
 ## About
-Simple multi-platform 4PDA Project Astoria Mega's appx file downloader & launcher (special Windows Phone 4PDA fans)
+Simple multi-platform 4PDA Project Astoria Mega's appx file downloader & launcher .
+
+Special for Windows Phone 4PDA fans =)
 
 
 ## Screenshots
