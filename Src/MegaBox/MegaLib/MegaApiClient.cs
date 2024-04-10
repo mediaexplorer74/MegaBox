@@ -1,30 +1,29 @@
-﻿namespace CG.Web.MegaApiClient
+﻿
+
+namespace CG.Web.MegaApiClient
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-    using System.Threading.Tasks;
+  using System;
+  using System.Collections.Generic;
+  using System.Globalization;
+  using System.IO;
+  using System.Linq;
+  using System.Security.Cryptography;
+  using System.Text.RegularExpressions;
+  using System.Threading;
+  using System.Threading.Tasks;
 
-    using CG.Web.MegaApiClient.Serialization;
+  using CG.Web.MegaApiClient.Serialization;
 
-    using Medo.Security.Cryptography;
+  using Medo.Security.Cryptography;
 
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+  using Newtonsoft.Json;
+  using Newtonsoft.Json.Linq;
+  //using StorageEverywhere; // !
 
-    using Windows.Storage; //!
-    using Windows.Storage.Pickers;
-    using Windows.Storage.Provider;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Navigation;
+  using static PCLHelper;
+  
 
-    public partial class MegaApiClient : IMegaApiClient
+  public partial class MegaApiClient : IMegaApiClient
   {
     private static readonly Uri BaseApiUri = new Uri("https://g.api.mega.co.nz/cs");
     private static readonly Uri BaseUri = new Uri("https://mega.nz");
@@ -526,6 +525,7 @@
           node.Type == NodeType.Directory ? nodeCrypto.SharedKey.ToBase64() : nodeCrypto.FullKey.ToBase64()));
     }
 
+        /*
     /// <summary>
     /// Download a specified node and save it to the specified file
     /// </summary>
@@ -537,10 +537,8 @@
     /// <exception cref="ArgumentNullException">node or outputFile is null</exception>
     /// <exception cref="ArgumentException">node is not valid (only <see cref="NodeType.File" /> can be downloaded)</exception>
     /// <exception cref="DownloadException">Checksum is invalid. Downloaded data are corrupted</exception>
-    public string DownloadFile(INode node, string outputFile, CancellationToken? cancellationToken = null)
+    public void DownloadFile(INode node, string outputFile, CancellationToken? cancellationToken = null)
     {
-      string FullPath = "";
-
       if (node == null)
       {
         throw new ArgumentNullException("node");
@@ -553,10 +551,8 @@
 
       using (Stream stream = this.Download(node, cancellationToken))
       {
-          FullPath = this.SaveStream(stream, outputFile);
+        this.SaveStream(stream, outputFile);
       }
-
-      return FullPath;
     }
 
     /// <summary>
@@ -570,39 +566,102 @@
     /// <exception cref="ArgumentNullException">uri or outputFile is null</exception>
     /// <exception cref="ArgumentException">Uri is not valid (id and key are required)</exception>
     /// <exception cref="DownloadException">Checksum is invalid. Downloaded data are corrupted</exception>
-    public string DownloadFile(Uri uri, string outputFile, CancellationToken? cancellationToken = null)
+    public void DownloadFile(Uri uri, string outputFile, CancellationToken? cancellationToken = null)
     {
-        string FullPath = "";
-
-        if (uri == null)
-        {
+      if (uri == null)
+      {
         throw new ArgumentNullException("uri");
-        }
+      }
 
-        if (string.IsNullOrEmpty(outputFile))
-        {
+      if (string.IsNullOrEmpty(outputFile))
+      {
         throw new ArgumentNullException("outputFile");
-        }
+      }
 
-        using (Stream stream = this.Download(uri, cancellationToken))
+      using (Stream stream = this.Download(uri, cancellationToken))
+      {
+        this.SaveStream(stream, outputFile);
+      }
+    }
+    */
+
+        /// <summary>
+        /// Download a specified node and save it to the specified file
+        /// </summary>
+        /// <param name="node">Node to download (only <see cref="NodeType.File" /> can be downloaded)</param>
+        /// <param name="outputFile">File to save the node to</param>
+        /// <param name="cancellationToken">CancellationToken used to cancel the action</param>
+        /// <exception cref="NotSupportedException">Not logged in</exception>
+        /// <exception cref="ApiException">Mega.co.nz service reports an error</exception>
+        /// <exception cref="ArgumentNullException">node or outputFile is null</exception>
+        /// <exception cref="ArgumentException">node is not valid (only <see cref="NodeType.File" /> can be downloaded)</exception>
+        /// <exception cref="DownloadException">Checksum is invalid. Downloaded data are corrupted</exception>
+        public string DownloadFile(INode node, string outputFile, CancellationToken? cancellationToken = null)
         {
-            FullPath = this.SaveStream(stream, outputFile);
+            string FullPath = "";
+
+            if (node == null)
+            {
+                throw new ArgumentNullException("node");
+            }
+
+            if (string.IsNullOrEmpty(outputFile))
+            {
+                throw new ArgumentNullException("outputFile");
+            }
+
+            using (Stream stream = this.Download(node, cancellationToken))
+            {
+                FullPath = this.SaveStream(stream, outputFile);
+            }
+
+            return FullPath;
         }
 
-        return FullPath;
+        /// <summary>
+        /// Download a specified Uri from Mega and save it to the specified file
+        /// </summary>
+        /// <param name="uri">Uri to download</param>
+        /// <param name="outputFile">File to save the Uri to</param>
+        /// <param name="cancellationToken">CancellationToken used to cancel the action</param>
+        /// <exception cref="NotSupportedException">Not logged in</exception>
+        /// <exception cref="ApiException">Mega.co.nz service reports an error</exception>
+        /// <exception cref="ArgumentNullException">uri or outputFile is null</exception>
+        /// <exception cref="ArgumentException">Uri is not valid (id and key are required)</exception>
+        /// <exception cref="DownloadException">Checksum is invalid. Downloaded data are corrupted</exception>
+        public string DownloadFile(Uri uri, string outputFile, CancellationToken? cancellationToken = null)
+        {
+            string FullPath = "";
+
+            if (uri == null)
+            {
+                throw new ArgumentNullException("uri");
+            }
+
+            if (string.IsNullOrEmpty(outputFile))
+            {
+                throw new ArgumentNullException("outputFile");
+            }
+
+            using (Stream stream = this.Download(uri, cancellationToken))
+            {
+                FullPath = this.SaveStream(stream, outputFile);
+            }
+
+            return FullPath;
         }
 
-    /// <summary>
-    /// Retrieve a Stream to download and decrypt the specified node
-    /// </summary>
-    /// <param name="node">Node to download (only <see cref="NodeType.File" /> can be downloaded)</param>
-    /// <param name="cancellationToken">CancellationToken used to cancel the action</param>
-    /// <exception cref="NotSupportedException">Not logged in</exception>
-    /// <exception cref="ApiException">Mega.co.nz service reports an error</exception>
-    /// <exception cref="ArgumentNullException">node or outputFile is null</exception>
-    /// <exception cref="ArgumentException">node is not valid (only <see cref="NodeType.File" /> can be downloaded)</exception>
-    /// <exception cref="DownloadException">Checksum is invalid. Downloaded data are corrupted</exception>
-    public Stream Download(INode node, CancellationToken? cancellationToken = null)
+        /// <summary>
+        /// Retrieve a Stream to download and decrypt the specified node
+        /// </summary>
+        /// <param name="node">Node to download (only <see cref="NodeType.File" /> can be downloaded)</param>
+        /// <param name="cancellationToken">CancellationToken used to cancel the action</param>
+        /// <exception cref="NotSupportedException">Not logged in</exception>
+        /// <exception cref="ApiException">Mega.co.nz service reports an error</exception>
+        /// <exception cref="ArgumentNullException">node or outputFile is null</exception>
+        /// <exception cref="ArgumentException">node is not valid (only <see cref="NodeType.File" /> can be downloaded)</exception>
+        /// <exception cref="DownloadException">Checksum is invalid. Downloaded data are corrupted</exception>
+        public Stream Download(INode node, CancellationToken? cancellationToken = null)
     {
       if (node == null)
       {
@@ -1140,10 +1199,15 @@
 #endif
     }
 
-        
-          
-        
-
+        /*
+        private void SaveStream(Stream stream, string outputFile)
+        {
+          using (FileStream fs = new FileStream(outputFile, FileMode.CreateNew, FileAccess.Write))
+          {
+            stream.CopyTo(fs, this.options.BufferSize);
+          }
+        }
+        */
 
         // Save Stream to file
         private string SaveStream(Stream stream, string outputFile)
@@ -1151,10 +1215,15 @@
             string FullPath = "";
 
             // определяем локальное хранилище
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            //StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            //string localFolder = $"C:\\Temp";
+
+            //string cacheDir = FileSystem.CacheDirectory;
+            string localFolder = GetStorageFolder();
 
             // подправляем путь
-            FullPath = localFolder.Path + "\\" + outputFile;
+            //FullPath = localFolder.Path + "\\" + outputFile;
+            FullPath = localFolder + "\\" + outputFile;
 
             try
             {
@@ -1171,7 +1240,7 @@
             }
 
             return FullPath;
-        
+
         }
 
         #endregion
@@ -1229,7 +1298,7 @@
       {
         id = null;
         decryptedKey = null;
-        isFolder = false; //default;
+        isFolder = default;
         return false;
       }
     }
@@ -1249,7 +1318,7 @@
       {
         id = null;
         decryptedKey = null;
-        isFolder = false; //default;
+        isFolder = default;
         return false;
       }
     }

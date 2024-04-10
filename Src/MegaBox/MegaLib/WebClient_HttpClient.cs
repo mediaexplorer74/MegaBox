@@ -59,32 +59,25 @@ namespace CG.Web.MegaApiClient
       
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
         requestMessage.Content = content;
-
-        try
+        
+        using (HttpResponseMessage response = this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead).Result)
         {
-            using (HttpResponseMessage response = this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead).Result)
+          if (!response.IsSuccessStatusCode
+              && response.StatusCode == HttpStatusCode.InternalServerError
+              && response.ReasonPhrase == "Server Too Busy")
+          {
+            return ((long)ApiResultCode.RequestFailedRetry).ToString();
+          }
+          
+          response.EnsureSuccessStatusCode();
+          
+          using (Stream stream = response.Content.ReadAsStreamAsync().Result)
+          {
+            using (StreamReader streamReader = new StreamReader(stream, Encoding.UTF8))
             {
-                if (!response.IsSuccessStatusCode
-                    && response.StatusCode == HttpStatusCode.InternalServerError
-                    && response.ReasonPhrase == "Server Too Busy")
-                {
-                    return ((long)ApiResultCode.RequestFailedRetry).ToString();
-                }
-
-                response.EnsureSuccessStatusCode();
-
-                using (Stream stream = response.Content.ReadAsStreamAsync().Result)
-                {
-                    using (StreamReader streamReader = new StreamReader(stream, Encoding.UTF8))
-                    {
-                        return streamReader.ReadToEnd();
-                    }
-                }
+              return streamReader.ReadToEnd();
             }
-        }
-        catch 
-        {
-            return default;
+          }
         }
       }
     }

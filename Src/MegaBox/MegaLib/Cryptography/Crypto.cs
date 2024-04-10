@@ -16,13 +16,12 @@
 
     static Crypto()
     {
-#if NETSTANDARD1_3 || NETSTANDARD2_0
-    AesCbc = Aes.Create(); // More per-call overhead but supported everywhere.
-    IsKnownReusable = false;
+#if NETSTANDARD1_3 || NETSTANDARD1_4 || NETSTANDARD1_6 || NETSTANDARD2_0
+      AesCbc = Aes.Create(); // More per-call overhead but supported everywhere.
+      IsKnownReusable = false;
 #else
-    //AesCbc = new AesManaged();
-    AesCbc = Aes.Create(); // More per-call overhead but supported everywhere.
-    IsKnownReusable = true;
+      AesCbc = new AesManaged();
+      IsKnownReusable = true;
 #endif
 
       AesCbc.Padding = PaddingMode.None;

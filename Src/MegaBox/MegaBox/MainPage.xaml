@@ -1,57 +1,113 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:local="clr-namespace:MegaBox"
-	xmlns:controls="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
-	BackgroundColor="Black"
-	Title = "MegaBox v2.0 Alpha"
-	x:Class="MegaBox.MainPage">
-	<Grid>
-	<Image Source="ColoredBackground" VerticalOptions="Fill" HorizontalOptions="Fill" Aspect="Fill"/>
-	<ListView x:Name="placeList" 
-		BackgroundColor="Transparent"
-		RowHeight="100" ItemsSource="{Binding .}" 
-        SeparatorVisibility="None"
-        ItemTapped="Item_Tapped"
-    >
-		<ListView.ItemTemplate>
-			<DataTemplate>
-				<ViewCell>
-					<Grid RowSpacing="5" ColumnSpacing="0" Margin="10,5" >
-						<Grid.RowDefinitions>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="AUTO"/>
-						</Grid.RowDefinitions>
-							
-						<Image Source="{Binding HeroImage}" Aspect="AspectFill" Grid.RowSpan="2" />
-						<Image Source="ShadowOverlay" Grid.RowSpan="2"  Aspect="Fill" VerticalOptions="End" HorizontalOptions="Fill" />
-						
-						<Grid Margin="10" RowSpacing="10" ColumnSpacing="10" Grid.Row="1">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="AUTO"/>
-								<RowDefinition Height="25"/>
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="25"/>
-								<ColumnDefinition Width="*"/>
-								<ColumnDefinition Width="AUTO"/>
-							</Grid.ColumnDefinitions>
-								
-							<Label Text="{Binding Title}"  Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource TitleLabel}" LineBreakMode="NoWrap"/>
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+  x:Class="MegaBox.MainPage"
+  xmlns="http://xamarin.com/schemas/2014/forms"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:local="clr-namespace:MegaBox"
+  BackgroundColor="Black"
+>
 
-							<!--controls:CircleImage Source="{Binding ProfileImage}" Aspect="AspectFill" Grid.Row="1" Grid.Column="0" WidthRequest="25" HeightRequest="25" /-->
-							<!--Label Text="{Binding Handle}" Grid.Row="1" Grid.Column="1" VerticalOptions="Center" Style="{StaticResource HandleLabel}" /-->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:NotBooleanConverter x:Key="NotBooleanConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-							<!--StackLayout Orientation="Horizontal"  VerticalOptions="Center" Grid.Column="2" Grid.Row="1" Spacing="5">
-								<Image Source="Eye"/>
-								<Label Text="{Binding ViewCount, StringFormat='{0:N0}'}" Style="{StaticResource HandleLabel}" />
-								<Label Text="views" Style="{StaticResource BodyLabel}"/>
-							</-->
-						</Grid>
-					</Grid>
-				</ViewCell>
-			</DataTemplate>
-		</ListView.ItemTemplate>
-		</ListView>
-	</Grid>
+   <StackLayout>
+        <Label x:Name="textLabel" Text="MegaBox v2.0 for Windows Phone 4PDA group" FontSize="Micro" />
+    <Entry x:Name="loginEntry" Placeholder="Search" TextChanged="loginEntry_TextChanged" />
+
+    <!--ItemTapped="timelineListView_ItemTapped"-->
+    <ListView
+    x:Name="timelineListView"
+    ItemSelected="timelineList_ItemSelected"
+    ItemsSource="{Binding .}"
+    RowHeight="75"
+    SeparatorVisibility="None">
+
+        <!--ListView.Header>
+            <StackLayout Padding="20,40,0,30">
+                <Label Style="{StaticResource PageHeaderLabel}" Text="MegaBox v2.0 Beta" />
+                    <Label Style="{StaticResource SubHeaderLabel}" Text="(mediaexplorer; Apr, 10 2024)" />
+            </StackLayout>
+        </ListView.Header-->
+
+        <ListView.Footer>
+            <Grid RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="64" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+                <Image Grid.RowSpan="2" Aspect="AspectFill" 
+                       HorizontalOptions="Fill" VerticalOptions="Start" 
+                       Source="MainBox1.png" />
+                <Image Aspect="Fill" Grid.RowSpan="2" HorizontalOptions="Fill" 
+                       Source="FadeToWhite.png" />
+            </Grid>
+        </ListView.Footer>
+
+        <ListView.ItemTemplate>
+
+            <DataTemplate>
+
+                <ViewCell>
+                    <Grid ColumnSpacing="0" RowSpacing="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--Label HorizontalOptions="Center" Style="{StaticResource ClassTimeLabel}" 
+              Text="{Binding ClassTime, StringFormat='{0:H:mm}'}" /-->
+                        
+                        <!--Label 
+                HorizontalOptions="Center" 
+                Style="{StaticResource ClassTimeLabel}" 
+                Text="{Binding FileSize}" /-->
+
+                            <Label 
+                HorizontalOptions="Center" 
+                Style="{StaticResource ClassTimeLabel}" 
+                Text="{Binding DateModified}" />
+
+                            <Label
+              Grid.Column="2"
+              Margin="20,0"
+              Style="{StaticResource ClassNameLabel}"
+              Text="{Binding Headline}" />
+
+                        <Label
+              Grid.Row="1"
+              Grid.Column="2"
+              Margin="20,0"
+              Style="{StaticResource ClassInstructorLabel}"
+              Text="{Binding DateLine}" />
+
+                        <BoxView
+              Grid.RowSpan="2"
+              Grid.Column="1"
+              BackgroundColor="{StaticResource TimelineColor}"
+              HorizontalOptions="Center"
+              IsVisible="{Binding IsLast, Converter={local:NotBooleanConverter}}"
+              VerticalOptions="Fill"
+              WidthRequest="3" 
+                />
+
+                        <Image Grid.Column="1" Source="Bullet.png" />
+
+                    </Grid>
+                </ViewCell>
+
+            </DataTemplate>
+
+        </ListView.ItemTemplate>
+
+    </ListView>
+   </StackLayout>
+
 </ContentPage>

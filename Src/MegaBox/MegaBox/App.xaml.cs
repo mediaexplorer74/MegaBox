@@ -13,10 +13,7 @@ namespace MegaBox
         {
             InitializeComponent();
 
-			var navigationPage = new NavigationPage(new MainPage());
-			navigationPage.BarBackgroundColor = Color.Black;
-			navigationPage.BarTextColor = Color.White;
-			MainPage = navigationPage;
+            MainPage = new MegaBox.MainPage();
         }
 
         protected override void OnStart()

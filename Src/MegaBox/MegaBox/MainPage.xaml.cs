@@ -1,116 +1,91 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-
-using System.Diagnostics;
-
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-
-using Megabox.Model;
+using MegaBox.Model; // !
 
 namespace MegaBox
 {
 
-    
     public partial class MainPage : ContentPage
     {
 
         // Этот интерфейс будет определять сигнатуру методов, 
         // реализация которых будет зависеть от конкретной платформы. 
-      
+
         // 1 Interface connector
         IMegaClient megaClient;
 
         // 2 Interface declaration
         public interface IMegaClient
         {
-            string GetInfo();
-            bool MegaLogin();
-            bool MegaLogout();
-            bool MegaGetNodes(string uri);
-            string DownloadFileByIndex(int idx);
-            void DownloadandRunFileByIndex(int idx);
+             void CopyToImageFolderAndRun(string FullLSPath, string ShortFName);
         }
 
-
+        
         public MainPage()
         {
-            
             InitializeComponent();
 
-            // A. Interface Init  
+            // Interface Init  
             megaClient = DependencyService.Get<IMegaClient>();
 
-            // " W10M Store " , by Win10Mobile Telegram Community =)
-            string megaStorage = "https://mega.nz/folder/om4kkKCa#Nv7RCZOhCXlCfzRnKpfCXg"; // 4PDA Astoria repo
-                          //"https://mega.nz/folder/SKZxnQAR#EvlQqjMIVQwoxcje9r-jAw"; // W10MGroup repo
-                          //"https://mega.nz/#F!SYtigRjB!EhNuflDF9fefSXuolgn0Rw"; // old
+            BindingContext = DataFactory.DataItems;
 
-            // B. Bind data
-            BindingContext = DataFactory.Places;
-
-            // C. Collect and prepare Mega.nz data...
-            Preprocess(megaStorage);
-
-            // D. Add new item into "ListView"
-
-            for(int i = 0; i < Contact.MegaCount; i++)
-            {
-                DataFactory.Places.Add(new GreatPlace
-                {
-                    Index = i,
-                    Title = Contact.MegaFName[i],
-                    Handle = Contact.MegaFKey[i],
-                    Type = Contact.MegaType[i],
-                   
-                });
-            }
+            // Apply items sorting ////////////////////////
+            string SearchBoxText = "";
+            DataFactory.FilterMegaItemsAsync(SearchBoxText);
+            ////////////////////////////////////////
         }//MainPage
 
 
-
-        // Collect and prepare Mega.nz data...
-        private void Preprocess(string MegaSharedFolderURL)
+        // loginEntry_TextChanged
+        private void loginEntry_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Contact.MegaCount = 0; //counter init 
+            string SearchBoxText = "";
 
-            DataFactory.Places.Clear(); //clear "data list"
-         
-            megaClient.MegaGetNodes(MegaSharedFolderURL); // fulfill nodes data 
+            if (e.NewTextValue != null)
+                SearchBoxText = e.NewTextValue.ToString();
 
-        }//Preprocess
+            DataFactory.FilterMegaItemsAsync(SearchBoxText);
+
+        }//loginEntry_TextChanged
 
 
-        // Item_Tapped handler
-        private async void Item_Tapped(object sender, EventArgs e)
+
+        // !!! ItemSelected handling
+        private async void timelineList_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            // Start to analyze our event sender...
-            ListView l1 = sender as ListView;
-            
-            // Get info about selected item (SI)
-            var SI = l1.SelectedItem;
+            // starting...
+            int idx = -1;
+            string StRes2 = "";
 
-            // Get Node's type
-            string StRes2 = (SI as MegaBox.GreatPlace).Type;
-
-            // Make simple type control (if not file, then do nothing ) 
-            if (StRes2 != "File")
+            if (e.SelectedItem == null)
+            {
                return;
-            
-            // File Type
-            string StRes1 = (SI as MegaBox.GreatPlace).Title;
-            
-            // Get the index of selected ListView's item
-            int SelectedItemIndex = (SI as MegaBox.GreatPlace).Index;
+            }
 
+            var SI = e.SelectedItem;
+
+            idx = (SI as MegaBox.Model.DataItem).Id;
+
+            if ( (idx < 0) || (idx > 10000) )
+                return;
+
+            StRes2 = (SI as MegaBox.Model.DataItem).Headline;
+
+           
             // Make Dialog Popup
-            bool choosedresult = await DisplayAlert($"{StRes1}", "Do you want to download&launch this file?", "Yes", "No");
+            bool choosedresult = await DisplayAlert
+             (
+                MegaClient.arNodes[idx].Name //+ " [" +
+                //MegaClient.arNodes[idx].Size.ToString() + " bytes]",
+                //MegaClient.arNodes[idx].ModificationDate.ToString() + " -modified " 
+                //+ "]"
+                ,
+                "Do you want to download & launch this file?",
+                "Yes", 
+                "No"
+             );
+
 
             // If user choose "No", do nothing =)
             if (choosedresult == false)
@@ -118,9 +93,42 @@ namespace MegaBox
                 return;
             }
 
-            // Download and Run file from Mega.Nz 
-            megaClient.DownloadandRunFileByIndex(SelectedItemIndex);
+            
+            // определяем локальное хранилище
+            //IFolder localFolder = FileSystem.Current.LocalStorage;
 
-        }//Item_Tapped
+            //DEBUG
+            //Debug.WriteLine(localFolder.Path);
+
+
+            // Phase 2
+
+            //"MEGA login"
+            MegaClient.client.LoginAnonymous();
+
+
+
+            // Скачиваем файл и получаем полный путь к нему...
+            string FullLSPath = MegaClient.client.DownloadFile
+            (
+                MegaClient.arNodes[idx],
+                MegaClient.arNodes[idx].Name
+            );
+
+            //"MEGA logout"
+            MegaClient.client.Logout();
+
+
+            // -----------------
+            string ShortFName = MegaClient.arNodes[idx].Name;
+
+            // RnD
+            megaClient.CopyToImageFolderAndRun(FullLSPath, ShortFName);
+
+            // finishing...
+            ((ListView)sender).SelectedItem = null;
+
+        }// Item_Selected
+
     }
 }

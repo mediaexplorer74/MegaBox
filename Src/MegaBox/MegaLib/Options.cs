@@ -83,7 +83,7 @@
     {
       if (attempt > DefaultApiRequestAttempts)
       {
-        delay = TimeSpan.FromMilliseconds(100);//default;
+        delay = default;
         return false;
       }
       else

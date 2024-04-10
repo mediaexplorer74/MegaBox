@@ -47,8 +47,6 @@
     //void 
     string DownloadFile(Uri uri, string outputFile, CancellationToken? cancellationToken = null);
 
-    Stream Download(INode node, CancellationToken? cancellationToken = null);
-
     Stream Download(Uri uri, CancellationToken? cancellationToken = null);
 
     INodeInfo GetNodeFromLink(Uri uri);

@@ -2,8 +2,8 @@
 {
   using System;
   using System.IO;
-  using System.Runtime.Serialization;
-  using DamienG.Security.Cryptography;
+    using System.Runtime.Serialization;
+    using DamienG.Security.Cryptography;
   using Newtonsoft.Json;
 
   internal class Attributes
