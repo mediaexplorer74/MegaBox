@@ -1,4 +1,4 @@
-# MegaBox v2 (AstoriaStore codename) - dev branch
+# MegaBox v2 (AstoriaStore codename) - ProjectA branch
 
 ## About
 Simplest multi-platform 4PDA Project Astoria Mega's appx file downloader & launcher (special for Windows Phone fans).
